@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Project dashboard</h1>
+    <p class="muted">Upload datasets, create YOLO labels, and run the three-stage training pipeline.</p>
+  </div>
+</div>
+<div class="grid3">
+  <div class="card"><div class="card-head"><h2>YOLO dataset</h2><span class="pill">{{ stats.yolo_images }} images</span></div><p>Labeled: <strong>{{ stats.yolo_labeled }}</strong></p></div>
+  <div class="card"><div class="card-head"><h2>Autoencoder</h2><span class="pill">{{ stats.autoencoder_normal }} normal</span></div><p>Folder: <code>workspace/data/normal</code></p></div>
+  <div class="card"><div class="card-head"><h2>Weights</h2><span class="pill {% if stats.weights.complete %}finished{% else %}queued{% endif %}">ready check</span></div>
+    <p>YOLO: {{ 'yes' if stats.weights.yolo else 'no' }}</p>
+    <p>AE: {{ 'yes' if stats.weights.ae else 'no' }}</p>
+    <p>Complete: {{ 'yes' if stats.weights.complete else 'no' }}</p>
+  </div>
+</div>
+<div class="grid2">
+  <div class="card">
+    <div class="card-head"><h2>Temporal folders</h2></div>
+    <div class="tablewrap"><table><thead><tr><th>Class</th><th>Images</th></tr></thead><tbody>
+    {% for name, count in stats.temporal.items() %}<tr><td>{{ name }}</td><td>{{ count }}</td></tr>{% endfor %}
+    </tbody></table></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Training jobs</h2></div>
+    {% if jobs %}
+      <div class="listbox">
+      {% for job in jobs %}
+        <div class="listitem">{{ job.stage }} — <span class="pill {{ job.status }}">{{ job.status }}</span></div>
+      {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">No jobs started yet.</p>
+    {% endif %}
+  </div>
+</div>
+<div class="card">
+  <div class="card-head"><h2>Required order</h2></div>
+  <ol class="list">
+    <li>Train YOLO.</li>
+    <li>Train Autoencoder.</li>
+    <li>Train complete temporal model.</li>
+  </ol>
+  <div class="row" style="margin-top:10px">
+    <a class="btn primary" href="/datasets">Open datasets</a>
+    <a class="btn" href="/label">Open labeling</a>
+    <a class="btn" href="/train">Open training</a>
+  </div>
+</div>
+{% endblock %}

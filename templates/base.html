@@ -1,0 +1,27 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title or 'Harvester Trainer' }}</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><a href="/">Harvester Trainer</a></div>
+      <div class="nav">
+        <a href="/" data-nav="/">Dashboard</a>
+        <a href="/datasets" data-nav="/datasets">Datasets</a>
+        <a href="/label" data-nav="/label">Label</a>
+        <a href="/train" data-nav="/train">Training</a>
+      </div>
+    </div>
+  </div>
+  <main class="container">{% block content %}{% endblock %}</main>
+  <div class="footer">Minimal web interface for YOLO + Autoencoder + Temporal model.</div>
+  <script src="/static/app.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header"><div><h1>Training</h1><p class="muted">Run the stages in order: YOLO → Autoencoder → Complete model.</p></div></div>
+<div class="grid3">
+  <div class="card"><div class="card-head"><h2>1. YOLO</h2></div><form action="/train/yolo" method="post"><button class="btn primary" type="submit">Start YOLO training</button></form></div>
+  <div class="card"><div class="card-head"><h2>2. Autoencoder</h2></div><form action="/train/autoencoder" method="post"><button class="btn primary" type="submit">Start AE training</button></form></div>
+  <div class="card"><div class="card-head"><h2>3. Complete</h2></div><form action="/train/complete" method="post"><button class="btn primary" type="submit">Start complete training</button></form></div>
+</div>
+<div class="card">
+  <div class="card-head"><h2>Jobs</h2></div>
+  {% if jobs %}
+  <div id="jobsWrap">
+    {% for job in jobs %}
+      <details {% if loop.first %}open{% endif %}>
+        <summary>{{ job.stage }} — <span class="pill {{ job.status }}">{{ job.status }}</span></summary>
+        <div class="muted">created {{ job.created_at }}</div>
+        <div class="logbox" id="log-{{ job.id }}">Loading log...</div>
+      </details>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="muted">No jobs yet.</p>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(async function(){
+  async function refreshLogs(){
+    const res = await fetch('/api/jobs');
+    const jobs = await res.json();
+    for(const job of jobs){
+      const el = document.getElementById('log-' + job.id);
+      if(!el) continue;
+      const lr = await fetch('/api/log/' + job.id);
+      const data = await lr.json();
+      el.textContent = data.text || 'No log yet';
+    }
+  }
+  refreshLogs();
+  setInterval(refreshLogs, 3000);
+})();
+</script>
+{% endblock %}

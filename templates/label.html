@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header"><div><h1>YOLO labeling</h1><p class="muted">Draw bounding boxes, assign class, press save. Delete removes selected box.</p></div></div>
+<div class="grid2">
+  <div class="card">
+    <div class="card-head"><h2>Images</h2></div>
+    <div class="listbox">
+      {% for name in images %}
+        <div class="listitem {% if name == image_name %}active{% endif %}"><a href="/label?image={{ name | urlencode }}">{{ name }}</a></div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Classes</h2></div>
+    <label>Selected class</label>
+    <select id="classSelect">{% for idx, cls in classes %}<option value="{{ idx }}">{{ idx }} — {{ cls }}</option>{% endfor %}</select>
+    <div class="row" style="margin-top:10px">
+      <button class="btn primary" id="btnSave" {% if not image_name %}disabled{% endif %}>Save labels</button>
+      <span id="saveStatus" class="muted"></span>
+    </div>
+    <h3>Boxes</h3>
+    <div id="boxesList" class="listbox"></div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-head"><h2>Canvas</h2></div>
+  {% if image_name %}
+  <div class="canvas-wrap"><canvas id="cvs"></canvas></div>
+  {% else %}
+  <p class="muted">Upload YOLO images first.</p>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+{% if image_name %}
+<script>
+  const imageUrl = "/pimg/{{ image_name | urlencode }}";
+  const imageName = {{ image_name | tojson }};
+  const initialBoxes = {{ boxes | tojson }};
+  const projectId = "workspace";
+</script>
+<script src="/static/label.js"></script>
+{% endif %}
+{% endblock %}

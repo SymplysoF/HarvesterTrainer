@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-header"><div><h1>Datasets</h1><p class="muted">Attach images and place them into the exact folders required by the training scripts.</p></div></div>
+<div class="grid2">
+  <div class="card">
+    <div class="card-head"><h2>Upload YOLO images</h2><span class="pill">images + labels</span></div>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="target" value="yolo" />
+      <label>Select images</label>
+      <input type="file" name="files" multiple accept=".jpg,.jpeg,.png,.bmp" required />
+      <div class="row" style="margin-top:10px"><button class="btn primary" type="submit">Upload to YOLO dataset</button></div>
+    </form>
+    <p class="muted">Saved into <code>workspace/data/yolo_train/images</code></p>
+  </div>
+  <div class="card">
+    <div class="card-head"><h2>Upload Autoencoder images</h2><span class="pill">normal only</span></div>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="target" value="autoencoder" />
+      <label>Select normal images</label>
+      <input type="file" name="files" multiple accept=".jpg,.jpeg,.png,.bmp" required />
+      <div class="row" style="margin-top:10px"><button class="btn primary" type="submit">Upload normal images</button></div>
+    </form>
+    <p class="muted">Saved into <code>workspace/data/normal</code></p>
+  </div>
+</div>
+<div class="card">
+  <div class="card-head"><h2>Upload Temporal model images</h2><span class="pill">class folders</span></div>
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="target" value="temporal" />
+    <label>Class folder</label>
+    <select name="defect_class">
+      <option value="connection">connection</option>
+      <option value="foreign object">foreign object</option>
+      <option value="garbage">garbage</option>
+      <option value="point">point</option>
+      <option value="normal">normal</option>
+    </select>
+    <label>Select images</label>
+    <input type="file" name="files" multiple accept=".jpg,.jpeg,.png,.bmp" required />
+    <div class="row" style="margin-top:10px"><button class="btn primary" type="submit">Upload to selected class</button></div>
+  </form>
+</div>
+<div class="card">
+  <div class="card-head"><h2>YOLO images ready for labeling</h2></div>
+  <input class="search" placeholder="Search image" data-filter-table="yoloTable" />
+  <div class="tablewrap"><table id="yoloTable"><thead><tr><th>Image</th><th>Action</th></tr></thead><tbody>
+  {% for name in yolo_images %}
+    <tr><td>{{ name }}</td><td class="actions"><a class="btn" href="/label?image={{ name | urlencode }}">Label</a></td></tr>
+  {% endfor %}
+  </tbody></table></div>
+</div>
+{% endblock %}
